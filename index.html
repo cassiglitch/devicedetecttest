@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>The Patient Device Oracle</title>
+  <title>The Shape-Shifting Device Oracle</title>
 </head>
 <body>
 
@@ -18,17 +18,15 @@
 
     if (userAgent.match(/Mobile/i) || platform.toLowerCase().includes('mobile') ||
         screenWidth < 600 && screenHeight < 600 || pixelRatio > 1) {
-      alert('The cosmic forces reveal: You wield the powers of a mobile phone!', () => {
-        // After the first alert is acknowledged, proceed with the tablet detection
-        if (userAgent.match(/Tablet/i) || platform.toLowerCase().includes('tablet') ||
-            screenWidth < 1024 && screenHeight < 1024) {
-          alert('Behold, the enchanted tablet in your hands!');
-        } else {
-          alert('A mighty computer emerges from the digital abyss!');
-        }
-      });
+      // If it's a mobile phone
+      alert('The cosmic forces reveal: You wield the powers of a mobile phone!');
     } else {
-      alert('A mighty computer emerges from the digital abyss!');
+      // If it's a tablet, distinguish between phone and tablet based on window shape
+      if (screenWidth > screenHeight) {
+        alert('Behold, the enchanted tablet in your hands!');
+      } else {
+        alert('You possess the mystical powers of a tablet in portrait mode!');
+      }
     }
   } else {
     // If it's not a touchscreen device, it must be a computer
