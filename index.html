@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Device Detective</title>
+</head>
+<body>
+
+<script>
+  const userAgent = navigator.userAgent;
+
+  if (userAgent.match(/Mobile/i)) {
+    alert('You are using a mysterious mobile device!');
+  } else if (userAgent.match(/Tablet/i)) {
+    alert('You possess the enchanted powers of a tablet!');
+  } else {
+    alert('Behold, a mighty computer emerges from the digital abyss!');
+  }
+</script>
+
+</body>
+</html>
