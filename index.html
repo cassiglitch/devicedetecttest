@@ -1,19 +1,32 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>The Ultimate Device Oracle</title>
+  <title>The Refined Device Oracle</title>
 </head>
 <body>
 
 <script>
-  const screenWidth = window.innerWidth;
-  const screenHeight = window.innerHeight;
+  const isTouchscreen = 'ontouchstart' in document.documentElement;
 
-  if (screenWidth < 600 && screenHeight < 600) {
-    alert('Ah, the mystical powers of a mobile device!');
-  } else if (screenWidth < 1024 && screenHeight < 1024) {
-    alert('Behold, the enchanted tablet in your grasp!');
+  if (isTouchscreen) {
+    // If it's a touchscreen device, proceed with tablet or mobile detection
+    const userAgent = navigator.userAgent;
+    const platform = navigator.platform;
+    const screenWidth = window.innerWidth;
+    const screenHeight = window.innerHeight;
+    const pixelRatio = window.devicePixelRatio;
+
+    if (userAgent.match(/Mobile/i) || platform.toLowerCase().includes('mobile') ||
+        screenWidth < 600 && screenHeight < 600 || pixelRatio > 1) {
+      alert('The cosmic forces reveal: You wield the powers of a mobile or tablet!');
+    } else if (userAgent.match(/Tablet/i) || platform.toLowerCase().includes('tablet') ||
+               screenWidth < 1024 && screenHeight < 1024) {
+      alert('Behold, the enchanted tablet in your hands!');
+    } else {
+      alert('A mighty computer emerges from the digital abyss!');
+    }
   } else {
+    // If it's not a touchscreen device, it must be a computer
     alert('A mighty computer emerges from the digital abyss!');
   }
 </script>
