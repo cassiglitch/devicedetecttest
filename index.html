@@ -9,7 +9,7 @@
   const isTouchscreen = 'ontouchstart' in document.documentElement;
 
   if (isTouchscreen) {
-    // If it's a touchscreen device, proceed with tablet or mobile detection
+    // If it's a touchscreen device, proceed with phone or tablet detection
     const userAgent = navigator.userAgent;
     const platform = navigator.platform;
     const screenWidth = window.innerWidth;
@@ -18,7 +18,7 @@
 
     if (userAgent.match(/Mobile/i) || platform.toLowerCase().includes('mobile') ||
         screenWidth < 600 && screenHeight < 600 || pixelRatio > 1) {
-      alert('The cosmic forces reveal: You wield the powers of a mobile or tablet!');
+      alert('The cosmic forces reveal: You wield the powers of a mobile phone!');
     } else if (userAgent.match(/Tablet/i) || platform.toLowerCase().includes('tablet') ||
                screenWidth < 1024 && screenHeight < 1024) {
       alert('Behold, the enchanted tablet in your hands!');
