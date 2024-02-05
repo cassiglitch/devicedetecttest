@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>The Refined Device Oracle</title>
+  <title>The Patient Device Oracle</title>
 </head>
 <body>
 
@@ -18,10 +18,15 @@
 
     if (userAgent.match(/Mobile/i) || platform.toLowerCase().includes('mobile') ||
         screenWidth < 600 && screenHeight < 600 || pixelRatio > 1) {
-      alert('The cosmic forces reveal: You wield the powers of a mobile phone!');
-    } else if (userAgent.match(/Tablet/i) || platform.toLowerCase().includes('tablet') ||
-               screenWidth < 1024 && screenHeight < 1024) {
-      alert('Behold, the enchanted tablet in your hands!');
+      alert('The cosmic forces reveal: You wield the powers of a mobile phone!', () => {
+        // After the first alert is acknowledged, proceed with the tablet detection
+        if (userAgent.match(/Tablet/i) || platform.toLowerCase().includes('tablet') ||
+            screenWidth < 1024 && screenHeight < 1024) {
+          alert('Behold, the enchanted tablet in your hands!');
+        } else {
+          alert('A mighty computer emerges from the digital abyss!');
+        }
+      });
     } else {
       alert('A mighty computer emerges from the digital abyss!');
     }
