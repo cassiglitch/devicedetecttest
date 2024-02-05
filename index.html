@@ -1,16 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Enhanced Device Detective</title>
+  <title>The Ultimate Device Oracle</title>
 </head>
 <body>
 
 <script>
-  const platform = navigator.platform;
+  const screenWidth = window.innerWidth;
+  const screenHeight = window.innerHeight;
 
-  if (platform.toLowerCase().includes('mobile')) {
-    alert('Ah, the mysterious powers of a mobile device!');
-  } else if (platform.toLowerCase().includes('tablet')) {
+  if (screenWidth < 600 && screenHeight < 600) {
+    alert('Ah, the mystical powers of a mobile device!');
+  } else if (screenWidth < 1024 && screenHeight < 1024) {
     alert('Behold, the enchanted tablet in your grasp!');
   } else {
     alert('A mighty computer emerges from the digital abyss!');
