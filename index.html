@@ -189,6 +189,7 @@ function update() {
                 if (snake.length === 1) {
                     clearInterval(poisonInterval);
                     isSlowMotion = false; // Reset slow motion effect
+                    restartGame();
                 }
             }, 1000);
         } else if (food.type === 'teleport') {
