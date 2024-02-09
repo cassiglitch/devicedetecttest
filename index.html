@@ -132,7 +132,6 @@ function draw() {
                     return 'pink';
             }
         }
-
 function update() {
     // If the snake is invincible, decrement the invincibility duration
     if (isInvincible) {
@@ -172,44 +171,35 @@ function update() {
 
     // Check if Snake eats Food
     if (head.x === food.x && head.y === food.y) {
-        if (food.type === 'superfood') {
-            score += 2;
-            snake.unshift({ ...snake[0], color: 'blue' });
-            snake.unshift({ ...snake[0], color: 'blue' });
-        } else if (food.type === 'poison') {
-            if (snake.length === 1) {
-                restartGame();
-                return;
-            }
-            // Apply slow motion effect when poison is eaten
-            isSlowMotion = true;
-            // Remove one segment every second until another food is eaten
-            poisonInterval = setInterval() => {
-                snake.pop();
-                if (snake.length === 1) {
-                    clearInterval(poisonInterval);
-                    isSlowMotion = false; // Reset slow motion effect
-                    restartGame();
-                }
-            }, 1000);
-        } else if (food.type === 'teleport') {
-            // Teleport the snake to a random location
-            const randomX = Math.floor(Math.random() * (canvas.width / gridSize));
-            const randomY = Math.floor(Math.random() * (canvas.height / gridSize));
-            head.x = randomX;
-            head.y = randomY;
-        } else if (food.type === 'invincibility') {
-            // Activate invincibility
-            isInvincible = true;
-            invincibilityDuration = 100; // Adjust the duration as needed
-        } else {
-            score += 1;
-            snake.unshift({ ...snake[0], color: 'blue' });
+        switch (food.type) {
+            case 'superfood':
+                score += 2;
+                snake.unshift({ ...snake[0], color: 'blue' });
+                snake.unshift({ ...snake[0], color: 'blue' });
+                break;
+            case 'poison':
+                // Reduce score by 50%, rounded up
+                const scoreReduction = Math.ceil(score / 2);
+                score = Math.max(0, score - scoreReduction);
+                break;
+            case 'teleport':
+                // Teleport the snake to a random location
+                const randomX = Math.floor(Math.random() * (canvas.width / gridSize));
+                const randomY = Math.floor(Math.random() * (canvas.height / gridSize));
+                head.x = randomX;
+                head.y = randomY;
+                break;
+            case 'invincibility':
+                // Activate invincibility
+                isInvincible = true;
+                invincibilityDuration = 100; // Adjust the duration as needed
+                break;
+            // Handle other food types...
         }
+        // Handle score and spawning new food
         isEating = true;
         eatingAnimationFrames = 8; // Set the number of frames for the eating animation
         spawnFood();
-
         // More frequent black blocks as score increases
         if (Math.random() < calculateObstacleSpawnProbability()) {
             spawnObstacle();
@@ -240,12 +230,6 @@ function update() {
     // Check for victory
     if (score === 100) {
         declareVictory();
-    }
-
-    // Check if slow motion effect needs to be disabled
-    if (!isEating && isSlowMotion) {
-        clearInterval(poisonInterval);
-        isSlowMotion = false;
     }
 }
         function calculateObstacleSpawnProbability() {
