@@ -64,84 +64,58 @@
             }
         }
 
-        function draw() {
-            // Clear the canvas
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+function draw() {
+    // Clear the canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // Draw Obstacles
-            ctx.fillStyle = 'black';
-            obstacles.forEach(obstacle => ctx.fillRect(obstacle.x * gridSize, obstacle.y * gridSize, gridSize, gridSize));
+    // Draw obstacles
+    ctx.fillStyle = 'black';
+    obstacles.forEach(obstacle => ctx.fillRect(obstacle.x * gridSize, obstacle.y * gridSize, gridSize, gridSize));
 
-            // Draw Dynamic Obstacles
-            ctx.fillStyle = 'grey';
-            dynamicObstacles.forEach(obstacle => {
-                ctx.fillRect(obstacle.x * gridSize, obstacle.y * gridSize, gridSize * 2, gridSize * 2);
-            });
+    // Draw dynamic obstacles
+    ctx.fillStyle = 'grey';
+    dynamicObstacles.forEach(obstacle => {
+        ctx.fillRect(obstacle.x * gridSize, obstacle.y * gridSize, gridSize * 2, gridSize * 2);
+    });
 
-            // Draw Snake
-            snake.forEach((segment, index) => {
-                ctx.fillStyle = segment.color;
-                ctx.fillRect(segment.x * gridSize, segment.y * gridSize, gridSize, gridSize);
-            });
+    // Draw snake
+    snake.forEach((segment, index) => {
+        ctx.fillStyle = segment.color;
+        ctx.fillRect(segment.x * gridSize, segment.y * gridSize, gridSize, gridSize);
+    });
 
-            // Draw Snake Head (light green)
-            const head = snake[0];
-            ctx.fillStyle = 'lightgreen'; // Head color
-            ctx.fillRect(head.x * gridSize, head.y * gridSize, gridSize, gridSize);
+    // Draw snake head (light green)
+    const head = snake[0];
+    ctx.fillStyle = 'lightgreen'; // Head color
+    ctx.fillRect(head.x * gridSize, head.y * gridSize, gridSize, gridSize);
 
-            // Draw Food
-            ctx.fillStyle = getFoodColor(food.type);
-            ctx.fillRect(food.x * gridSize, food.y * gridSize, gridSize, gridSize);
+    // Draw food
+    ctx.fillStyle = getFoodColor(food.type);
+    ctx.fillRect(food.x * gridSize, food.y * gridSize, gridSize, gridSize);
 
-            // Draw Score
-            ctx.fillStyle = 'black';
-            ctx.font = '20px Arial';
-            ctx.fillText(`Score: ${score}`, 10, 20);
+    // Draw score
+    ctx.fillStyle = 'black';
+    ctx.font = '20px Arial';
+    ctx.fillText(`Score: ${score}`, 10, 20);
 
-            // Draw Collision Animation
-            if (isColliding) {
-                for (let i = 0; i < snake.length; i++) {
-                    ctx.fillStyle = 'red';
-                    ctx.fillRect(snake[i].x * gridSize, snake[i].y * gridSize, gridSize, gridSize);
-                }
-                collisionAnimationFrames--;
-                if (collisionAnimationFrames === 0) {
-                    isColliding = false;
-                    collisionAnimationFrames = 10;
-                }
-            }
-
-            // Draw Eating Animation
-            if (isEating) {
-                drawEatingAnimation();
-            }
+    // Draw collision animation
+    if (isColliding) {
+        for (let i = 0; i < snake.length; i++) {
+            ctx.fillStyle = 'red';
+            ctx.fillRect(snake[i].x * gridSize, snake[i].y * gridSize, gridSize, gridSize);
         }
-
-        function drawEatingAnimation() {
-            const animationColor = 'rgba(0, 0, 255, 0.5)'; // Blue color with transparency
-            const segmentSize = gridSize;
-            const waveSize = 5; // Adjust the size of the wave
-            const maxFrames = 8; // Number of frames for the eating animation
-
-            const head = snake[0];
-            const eatenSegments = snake.slice(1, eatingAnimationFrames + 1);
-            eatenSegments.forEach((segment, index) => {
-                const animationFrame = eatingAnimationFrames - index;
-                const offset = waveSize * (maxFrames - animationFrame); // Calculate offset for the wave effect
-                const segmentX = segment.x * gridSize;
-                const segmentY = segment.y * gridSize;
-
-                ctx.fillStyle = animationColor;
-                ctx.fillRect(segmentX, segmentY, segmentSize, segmentSize);
-
-                // Draw a wave-like effect
-                ctx.fillRect(segmentX - offset, segmentY, segmentSize, segmentSize);
-                ctx.fillRect(segmentX + offset, segmentY, segmentSize, segmentSize);
-                ctx.fillRect(segmentX, segmentY - offset, segmentSize, segmentSize);
-                ctx.fillRect(segmentX, segmentY + offset, segmentSize, segmentSize);
-            });
+        collisionAnimationFrames--;
+        if (collisionAnimationFrames === 0) {
+            isColliding = false;
+            collisionAnimationFrames = 10;
         }
+    }
 
+    // Draw eating animation
+    if (isEating) {
+        drawEatingAnimation();
+    }
+}
         function getFoodColor(foodType) {
             switch (foodType) {
                 case 'normal':
