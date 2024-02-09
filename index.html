@@ -143,24 +143,6 @@ function update() {
         }
     }
 
-    // Check if the last food eaten was poison and apply the poison effect
-    if (lastFoodType === 'poison') {
-        // Apply slow motion effect when poison is eaten
-        isSlowMotion = true;
-        // Remove one segment every second until another food is eaten
-        poisonInterval = setInterval(() => {
-            snake.pop();
-            if (snake.length === 1) {
-                clearInterval(poisonInterval);
-                isSlowMotion = false; // Reset slow motion effect
-            }
-        }, 1000);
-    } else {
-        // If the last food eaten was not poison, clear the poison effect
-        clearInterval(poisonInterval);
-        isSlowMotion = false;
-    }
-
     // Update Snake position
     const head = { ...snake[0] };
     switch (direction) {
@@ -190,9 +172,6 @@ function update() {
 
     // Check if Snake eats Food
     if (head.x === food.x && head.y === food.y) {
-        // Store the type of the last food eaten
-        lastFoodType = food.type;
-
         if (food.type === 'superfood') {
             score += 2;
             snake.unshift({ ...snake[0], color: 'blue' });
@@ -202,6 +181,16 @@ function update() {
                 restartGame();
                 return;
             }
+            // Apply slow motion effect when poison is eaten
+            isSlowMotion = true;
+            // Remove one segment every second until another food is eaten
+            poisonInterval = setInterval(() => {
+                snake.pop();
+                if (snake.length === 1) {
+                    clearInterval(poisonInterval);
+                    isSlowMotion = false; // Reset slow motion effect
+                }
+            }, 1000);
         } else if (food.type === 'teleport') {
             // Teleport the snake to a random location
             const randomX = Math.floor(Math.random() * (canvas.width / gridSize));
@@ -250,6 +239,12 @@ function update() {
     // Check for victory
     if (score === 100) {
         declareVictory();
+    }
+
+    // Check if slow motion effect needs to be disabled
+    if (!isEating && isSlowMotion) {
+        clearInterval(poisonInterval);
+        isSlowMotion = false;
     }
 }
         function calculateObstacleSpawnProbability() {
