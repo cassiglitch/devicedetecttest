@@ -184,7 +184,7 @@ function update() {
             // Apply slow motion effect when poison is eaten
             isSlowMotion = true;
             // Remove one segment every second until another food is eaten
-            poisonInterval = setInterval(() => {
+            poisonInterval = setInterval() => {
                 snake.pop();
                 if (snake.length === 1) {
                     clearInterval(poisonInterval);
@@ -276,7 +276,7 @@ function update() {
                 return 'invincibility';
             } else if (random < 0.4) {
                 return 'superfood';
-            } else if (random < 0.9) {
+            } else if (random < 0.2) {
                 return 'poison';
             } else if (random === 0.5) {
                 return 'teleport';
