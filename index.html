@@ -198,6 +198,7 @@
     // Check if Snake eats Food
     if (head.x === food.x && head.y === food.y) {
         if (food.type === 'superfood') {
+            clearInterval(poisonInterval);
             score += 2;
             snake.unshift({ ...snake[0], color: 'blue' });
             snake.unshift({ ...snake[0], color: 'blue' });
@@ -219,12 +220,14 @@
             }, 1000);
         } else if (food.type === 'teleport') {
             // Teleport the snake to a random location
+            clearInterval(poisonInterval);
             const randomX = Math.floor(Math.random() * (canvas.width / gridSize));
             const randomY = Math.floor(Math.random() * (canvas.height / gridSize));
             head.x = randomX;
             head.y = randomY;
         } else if (food.type === 'invincibility') {
             // Activate invincibility
+            clearInterval(poisonInterval);
             isInvincible = true;
             invincibilityDuration = 100; // Adjust the duration as needed
         } else {
@@ -321,6 +324,7 @@
         }
 
         function restartGame() {
+            clearInterval(poisonInterval);
             alert(`Game Over! Your score: ${score}`);
             snake = Array.from({ length: startingLength }, (_, index) => ({ x: 10, y: 10 - index, color: 'green' }));
             obstacles = [];
