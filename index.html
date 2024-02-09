@@ -158,123 +158,114 @@
             }
         }
 
-        function update() {
-            // If the snake is invincible, decrement the invincibility duration
-            if (isInvincible) {
-                invincibilityDuration--;
-                // If the invincibility duration has expired, reset the invincibility status
-                if (invincibilityDuration <= 0) {
-                    isInvincible = false;
-                }
-            }
+  function update() {
+    // If the snake is invincible, decrement the invincibility duration
+    if (isInvincible) {
+        invincibilityDuration--;
+        // If the invincibility duration has expired, reset the invincibility status
+        if (invincibilityDuration <= 0) {
+            isInvincible = false;
+        }
+    }
 
-            // Update Snake position
-            const head = { ...snake[0] };
-            switch (direction) {
-                case 'up':
-                    head.y = (head.y - 1 + canvas.height / gridSize) % (canvas.height / gridSize);
-                    break;
-                case 'down':
-                    head.y = (head.y + 1) % (canvas.height / gridSize);
-                    break;
-                case 'left':
-                    head.x = (head.x - 1 + canvas.width / gridSize) % (canvas.width / gridSize);
-                    break;
-                case 'right':
-                    head.x = (head.x + 1) % (canvas.width / gridSize);
-                    break;
-            }
+    // Update Snake position
+    const head = { ...snake[0] };
+    switch (direction) {
+        case 'up':
+            head.y = (head.y - 1 + canvas.height / gridSize) % (canvas.height / gridSize);
+            break;
+        case 'down':
+            head.y = (head.y + 1) % (canvas.height / gridSize);
+            break;
+        case 'left':
+            head.x = (head.x - 1 + canvas.width / gridSize) % (canvas.width / gridSize);
+            break;
+        case 'right':
+            head.x = (head.x + 1) % (canvas.width / gridSize);
+            break;
+    }
 
-            // Check if Snake hits obstacles
-            if (!isInvincible && (obstacles.some(obstacle => obstacle.x === head.x && obstacle.y === head.y) ||
-                dynamicObstacles.some(obstacle => (head.x >= obstacle.x && head.x < obstacle.x + 2) &&
-                    (head.y >= obstacle.y && head.y < obstacle.y + 2)))) {
-                isColliding = true;
-                collisionAnimationFrames = 10;
+    // Check if Snake hits obstacles
+    if (!isInvincible && (obstacles.some(obstacle => obstacle.x === head.x && obstacle.y === head.y) ||
+        dynamicObstacles.some(obstacle => (head.x >= obstacle.x && head.x < obstacle.x + 2) &&
+            (head.y >= obstacle.y && head.y < obstacle.y + 2)))) {
+        isColliding = true;
+        collisionAnimationFrames = 10;
+        restartGame();
+        return;
+    }
+
+    // Check if Snake eats Food
+    if (head.x === food.x && head.y === food.y) {
+        if (food.type === 'superfood') {
+            score += 2;
+            snake.unshift({ ...snake[0], color: 'blue' });
+            snake.unshift({ ...snake[0], color: 'blue' });
+        } else if (food.type === 'poison') {
+            if (snake.length === 1) {
                 restartGame();
                 return;
             }
-
-            // Check if Snake eats Food
-            if (head.x === food.x && head.y === food.y) {
-                if (food.type === 'superfood') {
-                    score += 2;
-                    snake.unshift({ ...snake[0], color: 'blue' });
-                    snake.unshift({ ...snake[0], color: 'blue' });
-                } else if (food.type === 'poison') {
-                    if (snake.length <= 1) {
-                        restartGame();
-                        return;
-                    }
-                    snake.pop();
-                    poisonEffect = setInterval(() => {
-                        if (snake.length > 1) {
-                            snake.pop();
-                        } else {
-                            clearInterval(poisonEffect);
-                            restartGame(); // If poison will kill you and you only have one segment, restart the game
-                        }
-                    }, 1000);
-                    isSlowMotion = true;
-                    slowMotionDuration = 10; // Adjust the duration as needed
-                } else if (food.type === 'teleport') {
-                    // Teleport the snake to a random location
-                    const randomX = Math.floor(Math.random() * (canvas.width / gridSize));
-                    const randomY = Math.floor(Math.random() * (canvas.height / gridSize));
-                    head.x = randomX;
-                    head.y = randomY;
-                } else if (food.type === 'invincibility') {
-                    // Activate invincibility
-                    isInvincible = true;
-                    invincibilityDuration = 100; // Adjust the duration as needed
-                } else {
-                    score += 1;
-                    snake.unshift({ ...snake[0], color: 'blue' });
+            // Apply slow motion effect when poison is eaten
+            isSlowMotion = true;
+            // Remove one segment every second until another food is eaten
+            poisonInterval = setInterval(() => {
+                snake.pop();
+                if (snake.length === 1) {
+                    clearInterval(poisonInterval);
+                    isSlowMotion = false; // Reset slow motion effect
                 }
-                isEating = true;
-                eatingAnimationFrames = 8; // Set the number of frames for the eating animation
-                spawnFood();
+            }, 1000);
+        } else if (food.type === 'teleport') {
+            // Teleport the snake to a random location
+            const randomX = Math.floor(Math.random() * (canvas.width / gridSize));
+            const randomY = Math.floor(Math.random() * (canvas.height / gridSize));
+            head.x = randomX;
+            head.y = randomY;
+        } else if (food.type === 'invincibility') {
+            // Activate invincibility
+            isInvincible = true;
+            invincibilityDuration = 100; // Adjust the duration as needed
+        } else {
+            score += 1;
+            snake.unshift({ ...snake[0], color: 'blue' });
+        }
+        isEating = true;
+        eatingAnimationFrames = 8; // Set the number of frames for the eating animation
+        spawnFood();
 
-                // More frequent black blocks as score increases
-                if (Math.random() < calculateObstacleSpawnProbability()) {
-                    spawnObstacle();
-                }
+        // More frequent black blocks as score increases
+        if (Math.random() < calculateObstacleSpawnProbability()) {
+            spawnObstacle();
+        }
+    }
+
+    // Move Snake
+    snake.pop();
+    snake.unshift(head);
+
+    // Move Dynamic Obstacles
+    dynamicObstacles.forEach(obstacle => {
+        if (obstacle.id === 1) {
+            // Left to right movement
+            obstacle.x += 0.25;
+            if (obstacle.x + 2 > canvas.width / gridSize) {
+                obstacle.x = 0; // Reset to the left side if it goes beyond the canvas boundary
             }
-
-            // Move Snake
-            snake.pop();
-            snake.unshift(head);
-
-            // Move Dynamic Obstacles
-            dynamicObstacles.forEach(obstacle => {
-                if (obstacle.id === 1) {
-                    // Left to right movement
-                    obstacle.x += 0.25;
-                    if (obstacle.x + 2 > canvas.width / gridSize) {
-                        obstacle.x = 0; // Reset to the left side if it goes beyond the canvas boundary
-                    }
-                } else if (obstacle.id === 2) {
-                    // Up and down movement
-                    obstacle.y += 0.25;
-                    if (obstacle.y + 2 > canvas.height / gridSize) {
-                        obstacle.y = 0; // Reset to the top if it goes beyond the canvas boundary
-                    }
-                }
-            });
-
-            // Check for victory
-            if (score === 100) {
-                declareVictory();
-            }
-
-            // Apply slow motion effect
-            if (isSlowMotion) {
-                slowMotionDuration--;
-                if (slowMotionDuration <= 0) {
-                    isSlowMotion = false;
-                }
+        } else if (obstacle.id === 2) {
+            // Up and down movement
+            obstacle.y += 0.25;
+            if (obstacle.y + 2 > canvas.height / gridSize) {
+                obstacle.y = 0; // Reset to the top if it goes beyond the canvas boundary
             }
         }
+    });
+
+    // Check for victory
+    if (score === 100) {
+        declareVictory();
+    }
+}
 
         function calculateObstacleSpawnProbability() {
             // Obstacle spawn probability increases with score
@@ -371,7 +362,7 @@
             if (isSlowMotion) {
                 // Slow down the game loop by increasing the interval
                 clearInterval(gameInterval);
-                gameInterval = setInterval(gameLoop, 200); // Adjust the interval to slow down the game
+                gameInterval = setInterval(gameLoop, 150); // Adjust the interval to slow down the game
             } else {
                 // Restore the normal game loop interval
                 clearInterval(gameInterval);
