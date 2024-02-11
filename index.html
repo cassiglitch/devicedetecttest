@@ -1,394 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            overflow: hidden; /* No more scrolling for you! */
-            background-color: #f0f0f0; /* Set a background color */
-        }
-
-        #snakeCanvas {
-            position: absolute;
-            top: 75px; /* Adjust the top position as needed */
-            border: 1px solid #ddd;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add a subtle shadow to the canvas */
-        }
-  </style>
-  <title>Victorious Snake Game</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bouncing Triangle</title>
+<style>
+    canvas {
+        border: 1px solid black;
+    }
+</style>
 </head>
 <body>
-  <canvas id="snakeCanvas"></canvas>
-  <script>
-        const canvas = document.getElementById('snakeCanvas');
-        const ctx = canvas.getContext('2d');
+<canvas id="myCanvas"></canvas>
 
-        let gridSize = 20;
-        let startingLength = 5;
-        let snake = Array.from({ length: startingLength }, (_, index) => ({ x: 10, y: 10 - index, color: 'green' }));
-        let food = { x: 0, y: 0 };
-        let obstacles = [];
-        let dynamicObstacles = [];
-        let direction = 'right';
-        let score = 0;
-        let isEating = false;
-        let eatingAnimationFrames = 0;
-        let isInvincible = false;
-        let invincibilityDuration = 0;
-        let isColliding = false;
-        let collisionAnimationFrames = 10;
-        let canvasHeight = 0; // Add this variable to store the calculated canvas height
-        let isSlowMotion = false;
-        let slowMotionDuration = 0;
-        let poisonEffect;
-        let poisonInterval = null;
-    
-        function resizeCanvas() {
-            const screenWidth = window.innerWidth;
-            const screenHeight = window.innerHeight;
+<script>
+    const canvas = document.getElementById('myCanvas');
+    const ctx = canvas.getContext('2d');
 
-            const newCanvasWidth = Math.floor(screenWidth / gridSize) * gridSize;
-            const newCanvasHeight = Math.floor(screenHeight / gridSize) * gridSize;
+    let x = canvas.width / 2;
+    let y = canvas.height / 2;
+    let dx = 2;
+    let dy = -2;
+    let sideLength = 50;
+    let sides = 3; // starting with a triangle
+    let speedIncrease = 0.001;
+    let sizeIncrease = 0.001;
 
-            // Only update canvas size if it has changed
-            if (newCanvasWidth !== canvas.width || newCanvasHeight !== canvasHeight) {
-                canvas.width = newCanvasWidth;
-                canvas.height = newCanvasHeight;
-                canvasHeight = newCanvasHeight; // Store the calculated canvas height
-            }
+    function drawTriangle() {
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        for (let i = 1; i <= sides; i++) {
+            ctx.lineTo(x + sideLength * Math.cos(i * (2 * Math.PI) / sides), y + sideLength * Math.sin(i * (2 * Math.PI) / sides));
         }
-
-function draw() {
-    // Clear the canvas
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Draw obstacles
-    ctx.fillStyle = 'black';
-    obstacles.forEach(obstacle => ctx.fillRect(obstacle.x * gridSize, obstacle.y * gridSize, gridSize, gridSize));
-
-    // Draw dynamic obstacles
-    ctx.fillStyle = 'grey';
-    dynamicObstacles.forEach(obstacle => {
-        ctx.fillRect(obstacle.x * gridSize, obstacle.y * gridSize, gridSize * 2, gridSize * 2);
-    });
-
-    // Draw snake
-    snake.forEach((segment, index) => {
-        ctx.fillStyle = segment.color;
-        ctx.fillRect(segment.x * gridSize, segment.y * gridSize, gridSize, gridSize);
-    });
-
-    // Draw snake head (light green)
-    const head = snake[0];
-    ctx.fillStyle = 'lightgreen'; // Head color
-    ctx.fillRect(head.x * gridSize, head.y * gridSize, gridSize, gridSize);
-
-    // Draw food
-    ctx.fillStyle = getFoodColor(food.type);
-    ctx.fillRect(food.x * gridSize, food.y * gridSize, gridSize, gridSize);
-
-    // Draw score
-    ctx.fillStyle = 'black';
-    ctx.font = '20px Arial';
-    ctx.fillText(`Score: ${score}`, 10, 20);
-
-    // Draw collision animation
-    if (isColliding) {
-        for (let i = 0; i < snake.length; i++) {
-            ctx.fillStyle = 'red';
-            ctx.fillRect(snake[i].x * gridSize, snake[i].y * gridSize, gridSize, gridSize);
-        }
-        collisionAnimationFrames--;
-        if (collisionAnimationFrames === 0) {
-            isColliding = false;
-            collisionAnimationFrames = 10;
-        }
+        ctx.closePath();
+        ctx.fillStyle = '#0095DD';
+        ctx.fill();
     }
 
-    // Draw eating animation
-    if (isEating) {
-        drawEatingAnimation();
-    }
-}
-        function getFoodColor(foodType) {
-            switch (foodType) {
-                case 'normal':
-                    return 'red';
-                case 'superfood':
-                    return 'gold';
-                case 'poison':
-                    return 'purple';
-                case 'teleport':
-                    return 'blue';
-                case 'speedBoost':
-                    return 'cyan';
-                case 'invincibility':
-                    return 'pink';
-            }
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawTriangle();
+
+        if (x + dx > canvas.width - sideLength || x + dx < sideLength) {
+            dx = -dx;
+            sides++;
+            sideLength += sideLength * sizeIncrease;
+            dx *= (1 + speedIncrease);
         }
-function update() {
-    // If the snake is invincible, decrement the invincibility duration
-    if (isInvincible) {
-        invincibilityDuration--;
-        // If the invincibility duration has expired, reset the invincibility status
-        if (invincibilityDuration <= 0) {
-            isInvincible = false;
+
+        if (y + dy > canvas.height - sideLength || y + dy < sideLength) {
+            dy = -dy;
+            sides++;
+            sideLength += sideLength * sizeIncrease;
+            dy *= (1 + speedIncrease);
         }
+
+        x += dx;
+        y += dy;
     }
 
-    // Update Snake position
-    const head = { ...snake[0] };
-    switch (direction) {
-        case 'up':
-            head.y = (head.y - 1 + canvas.height / gridSize) % (canvas.height / gridSize);
-            break;
-        case 'down':
-            head.y = (head.y + 1) % (canvas.height / gridSize);
-            break;
-        case 'left':
-            head.x = (head.x - 1 + canvas.width / gridSize) % (canvas.width / gridSize);
-            break;
-        case 'right':
-            head.x = (head.x + 1) % (canvas.width / gridSize);
-            break;
-    }
-
-    // Check if Snake hits obstacles
-    if (!isInvincible && (obstacles.some(obstacle => obstacle.x === head.x && obstacle.y === head.y) ||
-        dynamicObstacles.some(obstacle => (head.x >= obstacle.x && head.x < obstacle.x + 2) &&
-            (head.y >= obstacle.y && head.y < obstacle.y + 2)))) {
-        isColliding = true;
-        collisionAnimationFrames = 10;
-        restartGame();
-        return;
-    }
-
-    // Check if Snake eats Food
-    if (head.x === food.x && head.y === food.y) {
-        switch (food.type) {
-            case 'superfood':
-                score += 2;
-                snake.unshift({ ...snake[0], color: 'blue' });
-                snake.unshift({ ...snake[0], color: 'blue' });
-                break;
-            case 'poison':
-                // Reduce score by 50%, rounded up
-                const scoreReduction = Math.ceil(score / 2);
-                score = Math.max(0, score - scoreReduction);
-                break;
-            case 'teleport':
-                // Teleport the snake to a random location
-                const randomX = Math.floor(Math.random() * (canvas.width / gridSize));
-                const randomY = Math.floor(Math.random() * (canvas.height / gridSize));
-                head.x = randomX;
-                head.y = randomY;
-                break;
-            case 'invincibility':
-                // Activate invincibility
-                isInvincible = true;
-                invincibilityDuration = 100; // Adjust the duration as needed
-                break;
-            // Handle other food types...
-        }
-        // Handle score and spawning new food
-        isEating = true;
-        eatingAnimationFrames = 8; // Set the number of frames for the eating animation
-        spawnFood();
-        // More frequent black blocks as score increases
-        if (Math.random() < calculateObstacleSpawnProbability()) {
-            spawnObstacle();
-        }
-    }
-
-    // Move Snake
-    snake.pop();
-    snake.unshift(head);
-
-    // Move Dynamic Obstacles
-    dynamicObstacles.forEach(obstacle => {
-        if (obstacle.id === 1) {
-            // Left to right movement
-            obstacle.x += 0.25;
-            if (obstacle.x + 2 > canvas.width / gridSize) {
-                obstacle.x = 0; // Reset to the left side if it goes beyond the canvas boundary
-            }
-        } else if (obstacle.id === 2) {
-            // Up and down movement
-            obstacle.y += 0.25;
-            if (obstacle.y + 2 > canvas.height / gridSize) {
-                obstacle.y = 0; // Reset to the top if it goes beyond the canvas boundary
-            }
-        }
-    });
-
-    // Check for victory
-    if (score === 100) {
-        declareVictory();
-    }
-}
-        function calculateObstacleSpawnProbability() {
-            // Obstacle spawn probability increases with score
-            return Math.min(0.1 + score / 200, 1); // Adjust the maximum spawn probability as needed
-        }
-
-        function spawnFood() {
-            let newFood;
-            do {
-                newFood = {
-                    x: Math.floor(Math.random() * (canvas.width / gridSize)),
-                    y: Math.floor(Math.random() * (canvas.height / gridSize)),
-                    type: generateFoodType()
-                };
-            } while (snake.some(segment => segment.x === newFood.x && segment.y === newFood.y) ||
-                obstacles.some(obstacle => obstacle.x === newFood.x && obstacle.y === newFood.y) ||
-                dynamicObstacles.some(obstacle => (newFood.x >= obstacle.x && newFood.x < obstacle.x + 2) &&
-                    (newFood.y >= obstacle.y && newFood.y < obstacle.y + 2)));
-
-            food = newFood;
-        }
-
-        function generateFoodType() {
-            // Adjust the probability for different types of food as needed
-            const random = Math.random();
-            if (random === 0.1) {
-                return 'invincibility';
-            } else if (random < 0.4) {
-                return 'superfood';
-            } else if (random < 0.2) {
-                return 'poison';
-            } else if (random === 0.5) {
-                return 'teleport';
-            } else if (random === 0.3) {
-                return 'speedBoost';
-            } else {
-                return 'normal';
-            }
-        }
-
-        function spawnObstacle() {
-            const x = Math.floor(Math.random() * (canvas.width / gridSize));
-            const y = Math.floor(Math.random() * (canvas.height / gridSize));
-
-            if (Math.random() < 0.5) {
-                obstacles.push({ x: x, y: y });
-            } else {
-                // Randomly assign an ID to the dynamic obstacle
-                const id = Math.random() < 0.5 ? 1 : 2;
-                dynamicObstacles.push({ x: x, y: y, id: id });
-            }
-        }
-
-        function restartGame() {
-            clearInterval(poisonInterval);
-            alert(`Game Over! Your score: ${score}`);
-            snake = Array.from({ length: startingLength }, (_, index) => ({ x: 10, y: 10 - index, color: 'green' }));
-            obstacles = [];
-            dynamicObstacles = [];
-            score = 0;
-            isEating = false;
-            eatingAnimationFrames = 0;
-            spawnFood();
-        }
-
-        function declareVictory() {
-            alert(`Victory! You have conquered the Snake kingdom with a score of 100!`);
-            restartGame();
-        }
-
-        function gameLoop() {
-            resizeCanvas(); // Resize the canvas on every game loop iteration
-            update();
-            draw();
-
-            // Handle eating animation
-            if (isEating) {
-                eatingAnimationFrames--;
-
-                // Apply the wavelike animation
-                for (let i = 1; i < snake.length; i++) {
-                    if (i <= eatingAnimationFrames) {
-                        snake[i].color = 'blue';
-                    } else {
-                        snake[i].color = 'green';
-                    }
-                }
-
-                if (eatingAnimationFrames === 0) {
-                    isEating = false;
-                }
-            }
-
-            // Apply slow motion effect
-            if (isSlowMotion) {
-                // Slow down the game loop by increasing the interval
-                clearInterval(gameInterval);
-                gameInterval = setInterval(gameLoop, 150); // Adjust the interval to slow down the game
-            } else {
-                // Restore the normal game loop interval
-                clearInterval(gameInterval);
-                gameInterval = setInterval(gameLoop, 100);
-            }
-        }
-
-        // Handle arrow key presses
-        document.addEventListener('keydown', event => {
-            switch (event.key) {
-                case 'ArrowUp':
-                    direction = 'up';
-                    break;
-                case 'ArrowDown':
-                    direction = 'down';
-                    break;
-                case 'ArrowLeft':
-                    direction = 'left';
-                    break;
-                case 'ArrowRight':
-                    direction = 'right';
-                    break;
-            }
-        });
-
-        // Handle touch events for mobile controls
-        let touchStartX = 0;
-        let touchStartY = 0;
-
-        function handleTouchStart(event) {
-            touchStartX = event.touches[0].clientX;
-            touchStartY = event.touches[0].clientY;
-        }
-
-        function handleTouchEnd(event) {
-            const touchEndX = event.changedTouches[0].clientX;
-            const touchEndY = event.changedTouches[0].clientY;
-
-            const deltaX = touchEndX - touchStartX;
-            const deltaY = touchEndY - touchStartY;
-
-            if (Math.abs(deltaX) > Math.abs(deltaY)) {
-                // Horizontal swipe
-                direction = deltaX > 0 ? 'right' : 'left';
-            } else {
-                // Vertical swipe
-                direction = deltaY > 0 ? 'down' : 'up';
-            }
-
-            // Reset start coordinates
-            touchStartX = 0;
-            touchStartY = 0;
-        }
-
-        // Initial setup
-        let gameInterval = setInterval(gameLoop, 100);
-        window.addEventListener('resize', resizeCanvas);
-        window.addEventListener('touchstart', handleTouchStart);
-        window.addEventListener('touchend', handleTouchEnd);
-        spawnFood();
-  </script>
+    setInterval(draw, 10);
+</script>
 </body>
 </html>
