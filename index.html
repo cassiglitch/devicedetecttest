@@ -41,10 +41,27 @@
 
     function drawPolygon() {
         let radius = sideLength / (2 * Math.sin(Math.PI / numSides));
-        let canvasSize = radius * 2 + 10; // Add some padding
-        canvas.width = canvasSize;
-        canvas.height = canvasSize;
-        ctx.translate(canvasSize / 2, canvasSize / 2);
+        let minX = Infinity;
+        let minY = Infinity;
+        let maxX = -Infinity;
+        let maxY = -Infinity;
+
+        for (let i = 0; i < numSides; i++) {
+            let angle = (Math.PI * 2 * i) / numSides;
+            let px = x + radius * Math.cos(angle);
+            let py = y + radius * Math.sin(angle);
+            minX = Math.min(minX, px);
+            minY = Math.min(minY, py);
+            maxX = Math.max(maxX, px);
+            maxY = Math.max(maxY, py);
+        }
+
+        let width = maxX - minX + 10; // Add padding
+        let height = maxY - minY + 10; // Add padding
+
+        canvas.width = width;
+        canvas.height = height;
+        ctx.translate(-minX + 5, -minY + 5);
 
         ctx.beginPath();
         ctx.moveTo(radius * Math.cos(0), radius * Math.sin(0));
@@ -57,7 +74,7 @@
     }
 
     function draw() {
-        ctx.clearRect(-canvas.width / 2, -canvas.height / 2, canvas.width, canvas.height);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
         drawPolygon();
 
         if (x + dx > canvas.width - sideLength || x + dx < sideLength) {
