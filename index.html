@@ -19,14 +19,20 @@
 
     let x = canvas.width / 2;
     let y = canvas.height / 2;
-    let dx = 2;
-    let dy = -2;
+    let dx = getRandomSpeed();
+    let dy = getRandomSpeed();
     let sideLength = 50;
     let numSides = 3; // starting with a triangle
-    let speedIncrease = 0.1;
-    let sizeIncrease = 0.01;
+    let speedIncrease = 0.001;
+    let sizeIncrease = 0.001;
+
+    function getRandomSpeed() {
+        return Math.random() * 4 - 2; // Random speed between -2 and 2
+    }
 
     function drawPolygon() {
+        canvas.width = sideLength * 2;
+        canvas.height = sideLength * 2;
         ctx.beginPath();
         ctx.moveTo(x + sideLength * Math.cos(0), y + sideLength * Math.sin(0));
         for (let i = 1; i <= numSides; i++) {
@@ -42,14 +48,14 @@
         drawPolygon();
 
         if (x + dx > canvas.width - sideLength || x + dx < sideLength) {
-            dx = -dx;
+            dx = -dx + getRandomSpeed();
             numSides++;
             sideLength += sideLength * sizeIncrease;
             dx *= (1 + speedIncrease);
         }
 
         if (y + dy > canvas.height - sideLength || y + dy < sideLength) {
-            dy = -dy;
+            dy = -dy + getRandomSpeed();
             numSides++;
             sideLength += sideLength * sizeIncrease;
             dy *= (1 + speedIncrease);
@@ -63,4 +69,3 @@
 </script>
 </body>
 </html>
-
