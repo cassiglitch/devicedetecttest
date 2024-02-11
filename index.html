@@ -5,7 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bouncing Shape</title>
 <style>
+    body, html {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+    }
+
     canvas {
+        display: block;
+        margin: auto;
         border: 1px solid black;
     }
 </style>
@@ -19,18 +28,28 @@
 
     let x = canvas.width / 2;
     let y = canvas.height / 2;
-    let dx = 2;
-    let dy = -2;
+    let dx = getRandomSpeed();
+    let dy = getRandomSpeed();
     let sideLength = 50;
     let numSides = 3; // starting with a triangle
     let speedIncrease = 0.001;
     let sizeIncrease = 0.001;
 
+    function getRandomSpeed() {
+        return Math.random() * 4 - 2; // Random speed between -2 and 2
+    }
+
     function drawPolygon() {
+        let radius = sideLength / (2 * Math.sin(Math.PI / numSides));
+        let canvasSize = radius * 2 + 10; // Add some padding
+        canvas.width = canvasSize;
+        canvas.height = canvasSize;
+        ctx.translate(canvasSize / 2, canvasSize / 2);
+
         ctx.beginPath();
-        ctx.moveTo(x + sideLength * Math.cos(0), y + sideLength * Math.sin(0));
+        ctx.moveTo(radius * Math.cos(0), radius * Math.sin(0));
         for (let i = 1; i <= numSides; i++) {
-            ctx.lineTo(x + sideLength * Math.cos(i * (2 * Math.PI) / numSides), y + sideLength * Math.sin(i * (2 * Math.PI) / numSides));
+            ctx.lineTo(radius * Math.cos(i * (2 * Math.PI) / numSides), radius * Math.sin(i * (2 * Math.PI) / numSides));
         }
         ctx.closePath();
         ctx.fillStyle = '#0095DD';
@@ -38,26 +57,37 @@
     }
 
     function draw() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.clearRect(-canvas.width / 2, -canvas.height / 2, canvas.width, canvas.height);
         drawPolygon();
 
         if (x + dx > canvas.width - sideLength || x + dx < sideLength) {
-            dx = -dx;
+            dx = -dx + getRandomSpeed();
             numSides++;
             sideLength += sideLength * sizeIncrease;
             dx *= (1 + speedIncrease);
+            if (numSides > 4) { // Change canvas shape to square if polygon has more than 4 sides
+                canvas.style.borderRadius = "0";
+            }
         }
 
         if (y + dy > canvas.height - sideLength || y + dy < sideLength) {
-            dy = -dy;
+            dy = -dy + getRandomSpeed();
             numSides++;
             sideLength += sideLength * sizeIncrease;
             dy *= (1 + speedIncrease);
+            if (numSides > 4) { // Change canvas shape to square if polygon has more than 4 sides
+                canvas.style.borderRadius = "0";
+            }
         }
 
         x += dx;
         y += dy;
     }
+
+    window.addEventListener('resize', function() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    });
 
     setInterval(draw, 10);
 </script>
