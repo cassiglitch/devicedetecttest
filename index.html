@@ -3,106 +3,29 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bouncing Shape</title>
+<title>Triangle Canvas</title>
 <style>
-    body, html {
-        margin: 0;
-        padding: 0;
-        width: 100%;
-        height: 100%;
-    }
-
-    canvas {
-        display: block;
-        margin: auto;
-        border: 1px solid black;
-    }
+  canvas {
+    border: 1px solid black;
+  }
 </style>
 </head>
 <body>
-<canvas id="myCanvas"></canvas>
+<canvas id="myCanvas" width="200" height="200"></canvas>
 
 <script>
-    const canvas = document.getElementById('myCanvas');
-    const ctx = canvas.getContext('2d');
+  // Get the canvas element
+  var canvas = document.getElementById('myCanvas');
+  var context = canvas.getContext('2d');
 
-    let x = canvas.width / 2;
-    let y = canvas.height / 2;
-    let dx = getRandomSpeed();
-    let dy = getRandomSpeed();
-    let sideLength = 50;
-    let numSides = 3; // starting with a triangle
-    let speedIncrease = 0.001;
-    let sizeIncrease = 0.001;
-
-    function getRandomSpeed() {
-        return Math.random() * 4 - 2; // Random speed between -2 and 2
-    }
-
-    function drawPolygon() {
-        let radius = sideLength / (2 * Math.sin(Math.PI / numSides));
-        let minX = Infinity;
-        let minY = Infinity;
-        let maxX = -Infinity;
-        let maxY = -Infinity;
-
-        for (let i = 0; i < numSides; i++) {
-            let angle = (Math.PI * 2 * i) / numSides;
-            let px = x + radius * Math.cos(angle);
-            let py = y + radius * Math.sin(angle);
-            minX = Math.min(minX, px);
-            minY = Math.min(minY, py);
-            maxX = Math.max(maxX, px);
-            maxY = Math.max(maxY, py);
-        }
-
-        let width = maxX - minX + 10; // Add padding
-        let height = maxY - minY + 10; // Add padding
-
-        canvas.width = width;
-        canvas.height = height;
-        ctx.translate(-minX + 5, -minY + 5);
-
-        ctx.beginPath();
-        ctx.moveTo(radius * Math.cos(0), radius * Math.sin(0));
-        for (let i = 1; i <= numSides; i++) {
-            ctx.lineTo(radius * Math.cos(i * (2 * Math.PI) / numSides), radius * Math.sin(i * (2 * Math.PI) / numSides));
-        }
-        ctx.closePath();
-        ctx.fillStyle = '#0095DD';
-        ctx.fill();
-    }
-
-    function draw() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        drawPolygon();
-
-        if (x + dx > canvas.width - sideLength || x + dx < sideLength) {
-            dx = -dx + getRandomSpeed();
-            numSides++;
-            sideLength += sideLength * sizeIncrease;
-            dx *= (1 + speedIncrease);
-            drawPolygon(); // Redraw polygon when shape changes
-        }
-
-        if (y + dy > canvas.height - sideLength || y + dy < sideLength) {
-            dy = -dy + getRandomSpeed();
-            numSides++;
-            sideLength += sideLength * sizeIncrease;
-            dy *= (1 + speedIncrease);
-            drawPolygon(); // Redraw polygon when shape changes
-        }
-
-        x += dx;
-        y += dy;
-    }
-
-    window.addEventListener('resize', function() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-    });
-
-    setInterval(draw, 10);
+  // Draw a triangle
+  context.beginPath();
+  context.moveTo(100, 20); // Starting point
+  context.lineTo(20, 180); // Second point
+  context.lineTo(180, 180); // Third point
+  context.closePath(); // Connects the last point back to the starting point
+  context.fillStyle = '#FF0000'; // Fill color
+  context.fill(); // Fill the triangle
 </script>
 </body>
 </html>
