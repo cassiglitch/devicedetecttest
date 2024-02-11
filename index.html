@@ -68,6 +68,7 @@
             if (numSides > 4) { // Change canvas shape to square if polygon has more than 4 sides
                 canvas.style.borderRadius = "0";
             }
+            drawPolygon(); // Redraw polygon when shape changes
         }
 
         if (y + dy > canvas.height - sideLength || y + dy < sideLength) {
@@ -78,6 +79,7 @@
             if (numSides > 4) { // Change canvas shape to square if polygon has more than 4 sides
                 canvas.style.borderRadius = "0";
             }
+            drawPolygon(); // Redraw polygon when shape changes
         }
 
         x += dx;
