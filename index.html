@@ -5,27 +5,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Triangle Canvas</title>
 <style>
-  canvas {
-    border: 1px solid black;
+  #triangleCanvas {
+    width: 0;
+    height: 0;
+    border-left: 100px solid transparent;
+    border-right: 100px solid transparent;
+    border-bottom: 173.2px solid #FF0000; /* Adjust height to create desired triangle */
   }
 </style>
 </head>
 <body>
+<div id="triangleCanvas"></div>
+
+<!-- Your canvas content goes here -->
 <canvas id="myCanvas" width="200" height="200"></canvas>
 
-<script>
-  // Get the canvas element
-  var canvas = document.getElementById('myCanvas');
-  var context = canvas.getContext('2d');
-
-  // Draw a triangle
-  context.beginPath();
-  context.moveTo(100, 20); // Starting point
-  context.lineTo(20, 180); // Second point
-  context.lineTo(180, 180); // Third point
-  context.closePath(); // Connects the last point back to the starting point
-  context.fillStyle = '#FF0000'; // Fill color
-  context.fill(); // Fill the triangle
-</script>
 </body>
 </html>
