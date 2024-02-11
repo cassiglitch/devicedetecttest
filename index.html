@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bouncing Triangle</title>
+<title>Bouncing Shape</title>
 <style>
     canvas {
         border: 1px solid black;
@@ -22,15 +22,15 @@
     let dx = 2;
     let dy = -2;
     let sideLength = 50;
-    let sides = 3; // starting with a triangle
+    let numSides = 3; // starting with a triangle
     let speedIncrease = 0.001;
     let sizeIncrease = 0.001;
 
-    function drawTriangle() {
+    function drawPolygon() {
         ctx.beginPath();
-        ctx.moveTo(x, y);
-        for (let i = 1; i <= sides; i++) {
-            ctx.lineTo(x + sideLength * Math.cos(i * (2 * Math.PI) / sides), y + sideLength * Math.sin(i * (2 * Math.PI) / sides));
+        ctx.moveTo(x + sideLength * Math.cos(0), y + sideLength * Math.sin(0));
+        for (let i = 1; i <= numSides; i++) {
+            ctx.lineTo(x + sideLength * Math.cos(i * (2 * Math.PI) / numSides), y + sideLength * Math.sin(i * (2 * Math.PI) / numSides));
         }
         ctx.closePath();
         ctx.fillStyle = '#0095DD';
@@ -39,18 +39,18 @@
 
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        drawTriangle();
+        drawPolygon();
 
         if (x + dx > canvas.width - sideLength || x + dx < sideLength) {
             dx = -dx;
-            sides++;
+            numSides++;
             sideLength += sideLength * sizeIncrease;
             dx *= (1 + speedIncrease);
         }
 
         if (y + dy > canvas.height - sideLength || y + dy < sideLength) {
             dy = -dy;
-            sides++;
+            numSides++;
             sideLength += sideLength * sizeIncrease;
             dy *= (1 + speedIncrease);
         }
@@ -63,3 +63,4 @@
 </script>
 </body>
 </html>
+
