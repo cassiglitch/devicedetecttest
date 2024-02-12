@@ -3,22 +3,83 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Triangle Canvas</title>
+<title>Morphing Canvas</title>
 <style>
-  #triangleCanvas {
-    width: 0;
-    height: 0;
-    border-left: 100px solid transparent;
-    border-right: 100px solid transparent;
-    border-bottom: 173.2px solid #FF0000; /* Adjust height to create desired triangle */
+  #canvasContainer {
+    position: relative;
+    width: 300px;
+    height: 300px;
+  }
+  
+  #canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
   }
 </style>
 </head>
 <body>
-<div id="triangleCanvas"></div>
+<div id="canvasContainer">
+  <canvas id="canvas"></canvas>
+</div>
 
-<!-- Your canvas content goes here -->
-<canvas id="myCanvas" width="200" height="200"></canvas>
+<script>
+  var canvas = document.getElementById('canvas');
+  var context = canvas.getContext('2d');
 
+  // Function to draw a triangle
+  function drawTriangle() {
+    context.beginPath();
+    context.moveTo(100, 20);
+    context.lineTo(20, 180);
+    context.lineTo(180, 180);
+    context.closePath();
+    context.fillStyle = '#FF0000';
+    context.fill();
+  }
+
+  // Function to draw a square
+  function drawSquare() {
+    context.fillStyle = '#00FF00';
+    context.fillRect(50, 50, 150, 150);
+  }
+
+  // Function to draw a circle
+  function drawCircle() {
+    context.beginPath();
+    context.arc(150, 150, 70, 0, 2 * Math.PI);
+    context.fillStyle = '#0000FF';
+    context.fill();
+  }
+
+  // Example: Morphing from triangle to square to circle
+  function morph() {
+    setTimeout(function() {
+      clearCanvas();
+      drawTriangle();
+      setTimeout(function() {
+        clearCanvas();
+        drawSquare();
+        setTimeout(function() {
+          clearCanvas();
+          drawCircle();
+        }, 1000); // Transition time
+      }, 1000); // Transition time
+    }, 1000); // Transition time
+  }
+
+  // Function to clear the canvas
+  function clearCanvas() {
+    context.clearRect(0, 0, canvas.width, canvas.height);
+  }
+
+  // Initial drawing
+  drawTriangle();
+
+  // Example: Morphing from triangle to square to circle
+  morph();
+</script>
 </body>
 </html>
