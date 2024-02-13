@@ -3,83 +3,69 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Morphing Canvas</title>
+<title>Bouncing Shape</title>
 <style>
-  #canvasContainer {
-    position: relative;
-    width: 300px;
-    height: 300px;
-  }
-  
-  #canvas {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-  }
+    canvas {
+        border: 1px solid black;
+    }
 </style>
 </head>
 <body>
-<div id="canvasContainer">
-  <canvas id="canvas"></canvas>
-</div>
+<canvas id="myCanvas"></canvas>
 
 <script>
-  var canvas = document.getElementById('canvas');
-  var context = canvas.getContext('2d');
+    const canvas = document.getElementById('myCanvas');
+    const ctx = canvas.getContext('2d');
 
-  // Function to draw a triangle
-  function drawTriangle() {
-    context.beginPath();
-    context.moveTo(100, 20);
-    context.lineTo(20, 180);
-    context.lineTo(180, 180);
-    context.closePath();
-    context.fillStyle = '#FF0000';
-    context.fill();
-  }
+    let x = canvas.width / 2;
+    let y = canvas.height / 2;
+    let dx = getRandomSpeed();
+    let dy = getRandomSpeed();
+    let sideLength = 50;
+    let numSides = 3; // starting with a triangle
+    let speedIncrease = 0.001;
+    let sizeIncrease = 0.001;
 
-  // Function to draw a square
-  function drawSquare() {
-    context.fillStyle = '#00FF00';
-    context.fillRect(50, 50, 150, 150);
-  }
+    function getRandomSpeed() {
+        return Math.random() * 4 - 2; // Random speed between -2 and 2
+    }
 
-  // Function to draw a circle
-  function drawCircle() {
-    context.beginPath();
-    context.arc(150, 150, 70, 0, 2 * Math.PI);
-    context.fillStyle = '#0000FF';
-    context.fill();
-  }
+    function drawPolygon() {
+        canvas.width = sideLength * 2;
+        canvas.height = sideLength * 2;
+        ctx.beginPath();
+        ctx.moveTo(x + sideLength * Math.cos(0), y + sideLength * Math.sin(0));
+        for (let i = 1; i <= numSides; i++) {
+            ctx.lineTo(x + sideLength * Math.cos(i * (2 * Math.PI) / numSides), y + sideLength * Math.sin(i * (2 * Math.PI) / numSides));
+        }
+        ctx.closePath();
+        ctx.fillStyle = '#0095DD';
+        ctx.fill();
+    }
 
-  // Example: Morphing from triangle to square to circle
-  function morph() {
-    setTimeout(function() {
-      clearCanvas();
-      drawTriangle();
-      setTimeout(function() {
-        clearCanvas();
-        drawSquare();
-        setTimeout(function() {
-          clearCanvas();
-          drawCircle();
-        }, 1000); // Transition time
-      }, 1000); // Transition time
-    }, 1000); // Transition time
-  }
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawPolygon();
 
-  // Function to clear the canvas
-  function clearCanvas() {
-    context.clearRect(0, 0, canvas.width, canvas.height);
-  }
+        if (x + dx > canvas.width - sideLength || x + dx < sideLength) {
+            dx = -dx + getRandomSpeed();
+            numSides++;
+            sideLength += sideLength * sizeIncrease;
+            dx *= (1 + speedIncrease);
+        }
 
-  // Initial drawing
-  drawTriangle();
+        if (y + dy > canvas.height - sideLength || y + dy < sideLength) {
+            dy = -dy + getRandomSpeed();
+            numSides++;
+            sideLength += sideLength * sizeIncrease;
+            dy *= (1 + speedIncrease);
+        }
 
-  // Example: Morphing from triangle to square to circle
-  morph();
+        x += dx;
+        y += dy;
+    }
+
+    setInterval(draw, 10);
 </script>
 </body>
 </html>
