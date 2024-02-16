@@ -81,14 +81,9 @@
         if (x + dx > canvas.width - sideLength || x + dx < sideLength) {
             if (!touchingBoundary) {
                 touchingBoundary = true; // Set flag to true when touching boundary
-                x -= lastCollisionXSpeed; // Move back to avoid overlap
-                dx = -lastCollisionXSpeed; // Reverse x-speed
+                x -= dx; // Move back to avoid overlap
+                dx = -dx; // Reverse x-speed
                 lastCollisionXSpeed = dx; // Update last collision x-speed
-                numSides++;
-                sideLength += sideLength * 0.1; // Increase side length
-                dx *= 1.1;
-                colorShift += 10;
-                if (numSides > 360) numSides = 360; // Reset to triangle if sides become too large
             }
         } else {
             touchingBoundary = false; // Reset flag when not touching boundary
@@ -97,19 +92,16 @@
         if (y + dy > canvas.height - sideLength || y + dy < sideLength) {
             if (!touchingBoundary) {
                 touchingBoundary = true; // Set flag to true when touching boundary
-                y -= lastCollisionYSpeed; // Move back to avoid overlap
-                dy = -lastCollisionYSpeed; // Reverse y-speed
+                y -= dy; // Move back to avoid overlap
+                dy = -dy; // Reverse y-speed
                 lastCollisionYSpeed = dy; // Update last collision y-speed
-                numSides++;
-                sideLength += sideLength * 0.1; // Increase side length
-                dy *= 1.1;
-                colorShift += 10;
-                if (numSides > 360) numSides = 360; // Reset to triangle if sides become too large
             }
         } else {
             touchingBoundary = false; // Reset flag when not touching boundary
-            dy += gravity; // Apply gravity
         }
+
+        // Apply gravity
+        dy += gravity;
 
         x += dx;
         y += dy;
