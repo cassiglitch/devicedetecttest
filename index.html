@@ -3,10 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bouncing Shape</title>
+<title>Bouncing Shape with Gravity, Trail, and Color Shift</title>
 <style>
     canvas {
         border: 1px solid black;
+        display: block; /* Remove any default padding and border */
+        margin: 0 auto; /* Center the canvas */
     }
 </style>
 </head>
@@ -17,14 +19,26 @@
     const canvas = document.getElementById('myCanvas');
     const ctx = canvas.getContext('2d');
 
+    // Function to resize canvas to fit window
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+
+    // Initial canvas resize
+    resizeCanvas();
+
     let x = canvas.width / 2;
     let y = canvas.height / 2;
     let dx = 2;
     let dy = -2;
     let sideLength = 50;
     let numSides = 3; // starting with a triangle
-    let speedIncrease = 0.001;
-    let sizeIncrease = 0.001;
+    let gravity = 0.1;
+    let trailLength = 10; // Number of frames to keep trail
+    let colorShift = 0; // Color shift value
+
+    let trail = [];
 
     function drawPolygon() {
         ctx.beginPath();
@@ -33,26 +47,43 @@
             ctx.lineTo(x + sideLength * Math.cos(i * (2 * Math.PI) / numSides), y + sideLength * Math.sin(i * (2 * Math.PI) / numSides));
         }
         ctx.closePath();
-        ctx.fillStyle = '#0095DD';
+        ctx.fillStyle = `rgb(${Math.abs(255 - colorShift)}, ${colorShift}, ${Math.abs(127 - colorShift)})`;
         ctx.fill();
     }
 
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Draw trail
+        for (let i = 0; i < trail.length; i++) {
+            let point = trail[i];
+            drawPolygon(point.x, point.y);
+        }
+
         drawPolygon();
+
+        // Add current position to trail
+        trail.push({ x: x, y: y });
+        if (trail.length > trailLength) {
+            trail.shift(); // Remove oldest point if trail is too long
+        }
 
         if (x + dx > canvas.width - sideLength || x + dx < sideLength) {
             dx = -dx;
             numSides++;
-            sideLength += sideLength * sizeIncrease;
-            dx *= (1 + speedIncrease);
+            sideLength += sideLength * 0.1;
+            dx *= 1.1;
+            colorShift += 10;
         }
 
         if (y + dy > canvas.height - sideLength || y + dy < sideLength) {
             dy = -dy;
             numSides++;
-            sideLength += sideLength * sizeIncrease;
-            dy *= (1 + speedIncrease);
+            sideLength += sideLength * 0.1;
+            dy *= 1.1;
+            colorShift += 10;
+        } else {
+            dy += gravity; // Apply gravity
         }
 
         x += dx;
@@ -60,6 +91,9 @@
     }
 
     setInterval(draw, 10);
+
+    // Resize canvas when the window is resized
+    window.addEventListener('resize', resizeCanvas);
 </script>
 </body>
 </html>
