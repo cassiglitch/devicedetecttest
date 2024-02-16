@@ -40,6 +40,9 @@
     let touchingBoundary = false; // Flag to track if touching boundary
     let lastCollisionXSpeed = dx; // Track last x-speed at collision
     let lastCollisionYSpeed = dy; // Track last y-speed at collision
+    let speedIncrement = 0.1; // Speed increment factor
+    let sizeIncrement = 0.1; // Size increment factor
+    let colorIncrement = 10; // Color increment factor
 
     let trail = [];
 
@@ -84,6 +87,11 @@
                 x -= dx; // Move back to avoid overlap
                 dx = -dx; // Reverse x-speed
                 lastCollisionXSpeed = dx; // Update last collision x-speed
+                numSides++;
+                sideLength += sideLength * sizeIncrement; // Increase side length
+                dx *= 1 + speedIncrement;
+                colorShift += colorIncrement;
+                if (numSides > 360) numSides = 3; // Reset to triangle if sides become too large
             }
         } else {
             touchingBoundary = false; // Reset flag when not touching boundary
@@ -95,9 +103,15 @@
                 y -= dy; // Move back to avoid overlap
                 dy = -dy; // Reverse y-speed
                 lastCollisionYSpeed = dy; // Update last collision y-speed
+                numSides++;
+                sideLength += sideLength * sizeIncrement; // Increase side length
+                dy *= 1 + speedIncrement;
+                colorShift += colorIncrement;
+                if (numSides > 360) numSides = 3; // Reset to triangle if sides become too large
             }
         } else {
             touchingBoundary = false; // Reset flag when not touching boundary
+            dy += gravity; // Apply gravity
         }
 
         // Apply gravity
