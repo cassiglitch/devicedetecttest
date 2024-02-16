@@ -35,7 +35,7 @@
     let sideLength = 50;
     let numSides = 3; // starting with a triangle
     let gravity = 0.1;
-    let trailLength = 1000000000; // Number of frames to keep trail
+    let trailLength = 100; // Number of frames to keep trail
     let colorShift = 0; // Color shift value
     let touchingBoundary = false; // Flag to track if touching boundary
     let lastCollisionXSpeed = dx; // Track last x-speed at collision
@@ -73,6 +73,8 @@
         // Draw trail
         drawTrail();
 
+        
+        colorShift += colorIncrement;
         drawPolygon(x, y, numSides);
 
         // Add current position to trail
@@ -86,7 +88,7 @@
                 touchingBoundary = true; // Set flag to true when touching boundary
                 x -= dx; // Move back to avoid overlap
                 dx = -lastCollisionXSpeed * (1 + sizeIncrement / 2); // Reverse x-speed with size adjustment
-                lastCollisionXSpeed = dx; // Update last collision x-speed
+                lastCollisionXSpeed = Math.abs(dx); // Update last collision x-speed
                 numSides++;
                 sideLength += sideLength * sizeIncrement; // Increase side length
                 dx *= 1 + speedIncrement;
@@ -102,7 +104,7 @@
                 touchingBoundary = true; // Set flag to true when touching boundary
                 y -= dy; // Move back to avoid overlap
                 dy = -lastCollisionYSpeed * (1 + sizeIncrement / 2); // Reverse y-speed with size adjustment
-                lastCollisionYSpeed = dy; // Update last collision y-speed
+                lastCollisionYSpeed = Math.abs(dy); // Update last collision y-speed
                 numSides++;
                 sideLength += sideLength * sizeIncrement; // Increase side length
                 dy *= 1 + speedIncrement;
@@ -122,7 +124,7 @@
     }
 
     setInterval(draw, 10);
-    colorShift += colorIncrement;
+
     // Resize canvas when the window is resized
     window.addEventListener('resize', resizeCanvas);
 </script>
