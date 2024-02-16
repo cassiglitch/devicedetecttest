@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bouncing Shape with Gravity, Trail, and Color Shift</title>
+<title>Bouncing Shape</title>
 <style>
     canvas {
         border: 1px solid black;
@@ -34,73 +34,40 @@
     let dy = -2;
     let sideLength = 50;
     let numSides = 3; // starting with a triangle
-    let gravity = 0.1;
-    let trailLength = 100; // Number of frames to keep trail
-    let colorShift = 0; // Color shift value
-    let touchingBoundary = false; // Flag to track if touching boundary
-    let lastCollisionXSpeed = dx; // Track last x-speed at collision
-    let lastCollisionYSpeed = dy; // Track last y-speed at collision
-    let speedIncrement = 0.1; // Speed increment factor
-    let sizeIncrement = 0.1; // Size increment factor
-    let colorIncrement = 1; // Color increment factor
+    let speedIncrease = 0.001;
+    let sizeIncrease = 0.001;
 
-    let trail = [];
-
-    function drawPolygon(x, y, sides) {
+    function drawPolygon() {
         ctx.beginPath();
         ctx.moveTo(x + sideLength * Math.cos(0), y + sideLength * Math.sin(0));
-        for (let i = 1; i <= sides; i++) {
-            ctx.lineTo(x + sideLength * Math.cos(i * (2 * Math.PI) / sides), y + sideLength * Math.sin(i * (2 * Math.PI) / sides));
+        for (let i = 1; i <= numSides; i++) {
+            ctx.lineTo(x + sideLength * Math.cos(i * (2 * Math.PI) / numSides), y + sideLength * Math.sin(i * (2 * Math.PI) / numSides));
         }
         ctx.closePath();
-        ctx.strokeStyle = 'black'; // Set border color
-        ctx.lineWidth = 2; // Set border width
-        ctx.stroke(); // Draw border
-        ctx.fillStyle = `rgb(${Math.abs(255 - colorShift)}, ${colorShift}, ${Math.abs(127 - colorShift)})`;
+        ctx.fillStyle = '#0095DD';
         ctx.fill();
-    }
-
-    function drawTrail() {
-        for (let i = 0; i < trail.length; i++) {
-            let point = trail[i];
-            drawPolygon(point.x, point.y, numSides);
-        }
     }
 
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawPolygon();
 
-        // Draw trail
-        drawTrail();
-
-        // Check if the shape is outside the canvas boundaries
-        if (x < sideLength || x > canvas.width - sideLength || y < sideLength || y > canvas.height - sideLength) {
-            // Reverse the direction if the shape goes beyond the canvas boundaries
+        if (x + dx > canvas.width - sideLength || x + dx < sideLength) {
             dx = -dx;
+            numSides++;
+            sideLength += sideLength * sizeIncrease;
+            dx *= (1 + speedIncrease);
+        }
+
+        if (y + dy > canvas.height - sideLength || y + dy < sideLength) {
             dy = -dy;
+            numSides++;
+            sideLength += sideLength * sizeIncrease;
+            dy *= (1 + speedIncrease);
         }
 
-        // Draw the shape
-        drawPolygon(x, y, numSides);
-
-        // Add current position to trail
-        trail.push({ x: x, y: y });
-        if (trail.length > trailLength) {
-            trail.shift(); // Remove oldest point if trail is too long
-        }
-
-        // Update position based on velocity
         x += dx;
         y += dy;
-
-        // Apply gravity
-        dy += gravity;
-
-        // Increment color shift
-        colorShift += colorIncrement;
-        if (colorShift > 255) {
-            colorShift = 0; // Reset color shift value
-        }
     }
 
     setInterval(draw, 10);
