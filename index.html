@@ -74,30 +74,30 @@
 
         if (x + dx > canvas.width - sideLength || x + dx < sideLength) {
             dx = -dx;
-            numSides++;
-            sideLength += sideLength * 0.1;
+            // sideLength += sideLength * 0.1; // Commented out to prevent side length increase
             dx *= 1.1;
             colorShift += 10;
-            if (numSides > 360) numSides = 3; // Reset to triangle if sides become too large
         }
 
         if (y + dy > canvas.height - sideLength || y + dy < sideLength) {
             dy = -dy;
-            numSides++;
-            sideLength += sideLength * 0.1;
+            // sideLength += sideLength * 0.1; // Commented out to prevent side length increase
             dy *= 1.1;
             colorShift += 10;
-            if (numSides > 360) numSides = 3; // Reset to triangle if sides become too large
         } else {
             dy += gravity; // Apply gravity
         }
 
         x += dx;
         y += dy;
+
+        // Reset numSides if it exceeds 360
+        if (numSides > 360) numSides = 3;
     }
 
     setInterval(draw, 10);
-
+    colorShift += 10;
+    
     // Resize canvas when the window is resized
     window.addEventListener('resize', resizeCanvas);
 </script>
