@@ -35,32 +35,36 @@
     let sideLength = 50;
     let numSides = 3; // starting with a triangle
     let gravity = 0.1;
-    let trailLength = 10; // Number of frames to keep trail
+    let trailLength = 100; // Number of frames to keep trail
     let colorShift = 0; // Color shift value
 
     let trail = [];
 
-    function drawPolygon() {
+    function drawPolygon(x, y, sides) {
         ctx.beginPath();
         ctx.moveTo(x + sideLength * Math.cos(0), y + sideLength * Math.sin(0));
-        for (let i = 1; i <= numSides; i++) {
-            ctx.lineTo(x + sideLength * Math.cos(i * (2 * Math.PI) / numSides), y + sideLength * Math.sin(i * (2 * Math.PI) / numSides));
+        for (let i = 1; i <= sides; i++) {
+            ctx.lineTo(x + sideLength * Math.cos(i * (2 * Math.PI) / sides), y + sideLength * Math.sin(i * (2 * Math.PI) / sides));
         }
         ctx.closePath();
         ctx.fillStyle = `rgb(${Math.abs(255 - colorShift)}, ${colorShift}, ${Math.abs(127 - colorShift)})`;
         ctx.fill();
     }
 
+    function drawTrail() {
+        for (let i = 0; i < trail.length; i++) {
+            let point = trail[i];
+            drawPolygon(point.x, point.y, numSides);
+        }
+    }
+
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         // Draw trail
-        for (let i = 0; i < trail.length; i++) {
-            let point = trail[i];
-            drawPolygon(point.x, point.y);
-        }
+        drawTrail();
 
-        drawPolygon();
+        drawPolygon(x, y, numSides);
 
         // Add current position to trail
         trail.push({ x: x, y: y });
@@ -74,6 +78,7 @@
             sideLength += sideLength * 0.1;
             dx *= 1.1;
             colorShift += 10;
+            if (numSides > 360) numSides = 3; // Reset to triangle if sides become too large
         }
 
         if (y + dy > canvas.height - sideLength || y + dy < sideLength) {
@@ -82,6 +87,7 @@
             sideLength += sideLength * 0.1;
             dy *= 1.1;
             colorShift += 10;
+            if (numSides > 360) numSides = 3; // Reset to triangle if sides become too large
         } else {
             dy += gravity; // Apply gravity
         }
