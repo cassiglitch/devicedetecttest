@@ -42,7 +42,7 @@
     let lastCollisionYSpeed = dy; // Track last y-speed at collision
     let speedIncrement = 0.1; // Speed increment factor
     let sizeIncrement = 0.1; // Size increment factor
-    let colorIncrement = 10; // Color increment factor
+    let colorIncrement = 1; // Color increment factor
 
     let trail = [];
 
@@ -85,7 +85,7 @@
             if (!touchingBoundary) {
                 touchingBoundary = true; // Set flag to true when touching boundary
                 x -= dx; // Move back to avoid overlap
-                dx = -dx; // Reverse x-speed
+                dx = -lastCollisionXSpeed; // Reverse x-speed
                 lastCollisionXSpeed = dx; // Update last collision x-speed
                 numSides++;
                 sideLength += sideLength * sizeIncrement; // Increase side length
@@ -101,7 +101,7 @@
             if (!touchingBoundary) {
                 touchingBoundary = true; // Set flag to true when touching boundary
                 y -= dy; // Move back to avoid overlap
-                dy = -dy; // Reverse y-speed
+                dy = -lastCollisionYSpeed; // Reverse y-speed
                 lastCollisionYSpeed = dy; // Update last collision y-speed
                 numSides++;
                 sideLength += sideLength * sizeIncrement; // Increase side length
