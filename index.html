@@ -72,7 +72,15 @@
 
         // Draw trail
         drawTrail();
-        colorShift += colorIncrement;
+
+        // Check if the shape is outside the canvas boundaries
+        if (x < sideLength || x > canvas.width - sideLength || y < sideLength || y > canvas.height - sideLength) {
+            // Reverse the direction if the shape goes beyond the canvas boundaries
+            dx = -dx;
+            dy = -dy;
+        }
+
+        // Draw the shape
         drawPolygon(x, y, numSides);
 
         // Add current position to trail
@@ -81,44 +89,18 @@
             trail.shift(); // Remove oldest point if trail is too long
         }
 
-        if (x + dx > canvas.width - sideLength || x + dx < sideLength || x - sideLength < 0 || x + sideLength > canvas.width) {
-            if (!touchingBoundary) {
-                touchingBoundary = true; // Set flag to true when touching boundary
-                x -= dx; // Move back to avoid overlap
-                dx = -lastCollisionXSpeed * (1 + sizeIncrement / 2); // Reverse x-speed with size adjustment
-                lastCollisionXSpeed = Math.abs(dx); // Update last collision x-speed
-                numSides++;
-                sideLength += sideLength * sizeIncrement; // Increase side length
-                dx *= 1 + speedIncrement;
-                colorShift += colorIncrement;
-                if (numSides > 360) numSides = 3; // Reset to triangle if sides become too large
-            }
-        } else {
-            touchingBoundary = false; // Reset flag when not touching boundary
-        }
-
-        if (y + dy > canvas.height - sideLength || y + dy < sideLength || y - sideLength < 0 || y + sideLength > canvas.height) {
-            if (!touchingBoundary) {
-                touchingBoundary = true; // Set flag to true when touching boundary
-                y -= dy; // Move back to avoid overlap
-                dy = -lastCollisionYSpeed * (1 + sizeIncrement / 2); // Reverse y-speed with size adjustment
-                lastCollisionYSpeed = Math.abs(dy); // Update last collision y-speed
-                numSides++;
-                sideLength += sideLength * sizeIncrement; // Increase side length
-                dy *= 1 + speedIncrement;
-                colorShift += colorIncrement;
-                if (numSides > 360) numSides = 3; // Reset to triangle if sides become too large
-            }
-        } else {
-            touchingBoundary = false; // Reset flag when not touching boundary
-            dy += gravity; // Apply gravity
-        }
+        // Update position based on velocity
+        x += dx;
+        y += dy;
 
         // Apply gravity
         dy += gravity;
 
-        x += dx;
-        y += dy;
+        // Increment color shift
+        colorShift += colorIncrement;
+        if (colorShift > 255) {
+            colorShift = 0; // Reset color shift value
+        }
     }
 
     setInterval(draw, 10);
