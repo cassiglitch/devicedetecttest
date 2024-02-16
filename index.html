@@ -35,7 +35,7 @@
     let sideLength = 50;
     let numSides = 3; // starting with a triangle
     let gravity = 0.1;
-    let trailLength = 100; // Number of frames to keep trail
+    let trailLength = 100000000000000; // Number of frames to keep trail
     let colorShift = 0; // Color shift value
 
     let trail = [];
@@ -77,27 +77,27 @@
 
         if (x + dx > canvas.width - sideLength || x + dx < sideLength) {
             dx = -dx;
-            if (numSides === 4 && sideLength > 2) {
-                sideLength -= 1; // Decrease side length when it's a square
+            if (numSides === 360) {
+                sideLength -= 0; // Decrease side length when it's a square
             } else {
                 numSides++;
                 sideLength += sideLength * 0.1; // Increase side length
                 dx *= 1.1;
                 colorShift += 10;
-                if (numSides > 360) numSides = 3; // Reset to triangle if sides become too large
+                if (numSides > 360) numSides = 360; // Reset to triangle if sides become too large
             }
         }
 
         if (y + dy > canvas.height - sideLength || y + dy < sideLength) {
             dy = -dy;
-            if (numSides === 4 && sideLength > 2) {
-                sideLength -= 1; // Decrease side length when it's a square
+            if (numSides === 360) {
+                sideLength -= 0; // Decrease side length when it's a square
             } else {
                 numSides++;
                 sideLength += sideLength * 0.1; // Increase side length
                 dy *= 1.1;
                 colorShift += 10;
-                if (numSides > 360) numSides = 3; // Reset to triangle if sides become too large
+                if (numSides > 360) numSides = 360; // Reset to triangle if sides become too large
             }
         } else {
             dy += gravity; // Apply gravity
