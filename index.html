@@ -38,6 +38,8 @@
     let trailLength = 100; // Number of frames to keep trail
     let colorShift = 0; // Color shift value
     let touchingBoundary = false; // Flag to track if touching boundary
+    let lastCollisionXSpeed = dx; // Track last x-speed at collision
+    let lastCollisionYSpeed = dy; // Track last y-speed at collision
 
     let trail = [];
 
@@ -79,9 +81,11 @@
         if (x + dx > canvas.width - sideLength || x + dx < sideLength) {
             if (!touchingBoundary) {
                 touchingBoundary = true; // Set flag to true when touching boundary
-                dx = -dx;
+                x -= lastCollisionXSpeed; // Move back to avoid overlap
+                dx = -lastCollisionXSpeed; // Reverse x-speed
+                lastCollisionXSpeed = dx; // Update last collision x-speed
                 numSides++;
-                sideLength += sideLength * 0.2; // Increase side length
+                sideLength += sideLength * 0.1; // Increase side length
                 dx *= 1.1;
                 colorShift += 10;
                 if (numSides > 360) numSides = 360; // Reset to triangle if sides become too large
@@ -93,9 +97,11 @@
         if (y + dy > canvas.height - sideLength || y + dy < sideLength) {
             if (!touchingBoundary) {
                 touchingBoundary = true; // Set flag to true when touching boundary
-                dy = -dy;
+                y -= lastCollisionYSpeed; // Move back to avoid overlap
+                dy = -lastCollisionYSpeed; // Reverse y-speed
+                lastCollisionYSpeed = dy; // Update last collision y-speed
                 numSides++;
-                sideLength += sideLength * 0.2; // Increase side length
+                sideLength += sideLength * 0.1; // Increase side length
                 dy *= 1.1;
                 colorShift += 10;
                 if (numSides > 360) numSides = 360; // Reset to triangle if sides become too large
