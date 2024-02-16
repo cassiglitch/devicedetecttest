@@ -35,8 +35,9 @@
     let sideLength = 50;
     let numSides = 3; // starting with a triangle
     let gravity = 0.1;
-    let trailLength = 100000000000000; // Number of frames to keep trail
+    let trailLength = 100; // Number of frames to keep trail
     let colorShift = 0; // Color shift value
+    let touchingBoundary = false; // Flag to track if touching boundary
 
     let trail = [];
 
@@ -76,30 +77,31 @@
         }
 
         if (x + dx > canvas.width - sideLength || x + dx < sideLength) {
-            dx = -dx;
-            if (numSides === 360) {
-                sideLength -= 0; // Decrease side length when it's a square
-            } else {
+            if (!touchingBoundary) {
+                touchingBoundary = true; // Set flag to true when touching boundary
+                dx = -dx;
                 numSides++;
-                sideLength += sideLength * 0.1; // Increase side length
+                sideLength += sideLength * 0.2; // Increase side length
                 dx *= 1.1;
                 colorShift += 10;
                 if (numSides > 360) numSides = 360; // Reset to triangle if sides become too large
             }
+        } else {
+            touchingBoundary = false; // Reset flag when not touching boundary
         }
 
         if (y + dy > canvas.height - sideLength || y + dy < sideLength) {
-            dy = -dy;
-            if (numSides === 360) {
-                sideLength -= 0; // Decrease side length when it's a square
-            } else {
+            if (!touchingBoundary) {
+                touchingBoundary = true; // Set flag to true when touching boundary
+                dy = -dy;
                 numSides++;
-                sideLength += sideLength * 0.1; // Increase side length
+                sideLength += sideLength * 0.2; // Increase side length
                 dy *= 1.1;
                 colorShift += 10;
                 if (numSides > 360) numSides = 360; // Reset to triangle if sides become too large
             }
         } else {
+            touchingBoundary = false; // Reset flag when not touching boundary
             dy += gravity; // Apply gravity
         }
 
