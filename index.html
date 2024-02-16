@@ -47,6 +47,9 @@
             ctx.lineTo(x + sideLength * Math.cos(i * (2 * Math.PI) / sides), y + sideLength * Math.sin(i * (2 * Math.PI) / sides));
         }
         ctx.closePath();
+        ctx.strokeStyle = 'black'; // Set border color
+        ctx.lineWidth = 2; // Set border width
+        ctx.stroke(); // Draw border
         ctx.fillStyle = `rgb(${Math.abs(255 - colorShift)}, ${colorShift}, ${Math.abs(127 - colorShift)})`;
         ctx.fill();
     }
@@ -74,20 +77,28 @@
 
         if (x + dx > canvas.width - sideLength || x + dx < sideLength) {
             dx = -dx;
-            numSides++;
-            sideLength += sideLength * 0.1; // Increase side length
-            dx *= 1.1;
-            colorShift += 10;
-            if (numSides > 360) numSides = 3; // Reset to triangle if sides become too large
+            if (numSides === 4 && sideLength > 2) {
+                sideLength -= 1; // Decrease side length when it's a square
+            } else {
+                numSides++;
+                sideLength += sideLength * 0.1; // Increase side length
+                dx *= 1.1;
+                colorShift += 10;
+                if (numSides > 360) numSides = 3; // Reset to triangle if sides become too large
+            }
         }
 
         if (y + dy > canvas.height - sideLength || y + dy < sideLength) {
             dy = -dy;
-            numSides++;
-            sideLength += sideLength * 0.1; // Increase side length
-            dy *= 1.1;
-            colorShift += 10;
-            if (numSides > 360) numSides = 3; // Reset to triangle if sides become too large
+            if (numSides === 4 && sideLength > 2) {
+                sideLength -= 1; // Decrease side length when it's a square
+            } else {
+                numSides++;
+                sideLength += sideLength * 0.1; // Increase side length
+                dy *= 1.1;
+                colorShift += 10;
+                if (numSides > 360) numSides = 3; // Reset to triangle if sides become too large
+            }
         } else {
             dy += gravity; // Apply gravity
         }
