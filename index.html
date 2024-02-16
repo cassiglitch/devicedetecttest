@@ -72,8 +72,6 @@
 
         // Draw trail
         drawTrail();
-
-        
         colorShift += colorIncrement;
         drawPolygon(x, y, numSides);
 
@@ -83,7 +81,7 @@
             trail.shift(); // Remove oldest point if trail is too long
         }
 
-        if (x + dx > canvas.width - sideLength || x + dx < sideLength) {
+        if (x + dx > canvas.width - sideLength || x + dx < sideLength || x - sideLength < 0 || x + sideLength > canvas.width) {
             if (!touchingBoundary) {
                 touchingBoundary = true; // Set flag to true when touching boundary
                 x -= dx; // Move back to avoid overlap
@@ -99,7 +97,7 @@
             touchingBoundary = false; // Reset flag when not touching boundary
         }
 
-        if (y + dy > canvas.height - sideLength || y + dy < sideLength) {
+        if (y + dy > canvas.height - sideLength || y + dy < sideLength || y - sideLength < 0 || y + sideLength > canvas.height) {
             if (!touchingBoundary) {
                 touchingBoundary = true; // Set flag to true when touching boundary
                 y -= dy; // Move back to avoid overlap
